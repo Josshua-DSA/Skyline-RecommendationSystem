@@ -1,0 +1,8 @@
+{
+    "accuracy": 0.9654,
+    "precision_satisfied": 0.9739,
+    "recall_satisfied": 0.9456,
+    "f1_satisfied": 0.9595,
+    "roc_auc": 0.9955,
+    "at_risk_detection_rate": 0.9805
+}

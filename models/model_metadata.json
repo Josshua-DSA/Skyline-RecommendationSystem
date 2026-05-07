@@ -1,0 +1,112 @@
+{
+    "model_name": "catboost_satisfaction_model",
+    "model_type": "CatBoostClassifier",
+    "target_column": "Satisfaction",
+    "target_mapping": {
+        "Neutral or Dissatisfied": 0,
+        "Satisfied": 1
+    },
+    "inverse_target_mapping": {
+        "0": "Neutral or Dissatisfied",
+        "1": "Satisfied"
+    },
+    "features": [
+        "Gender",
+        "Age",
+        "Customer Type",
+        "Type of Travel",
+        "Class",
+        "Departure and Arrival Time Convenience",
+        "Ease of Online Booking",
+        "Check-in Service",
+        "Online Boarding",
+        "Gate Location",
+        "On-board Service",
+        "Seat Comfort",
+        "Leg Room Service",
+        "Cleanliness",
+        "Food and Drink",
+        "In-flight Service",
+        "In-flight Wifi Service",
+        "In-flight Entertainment",
+        "Baggage Handling",
+        "Flight Distance",
+        "Departure Delay",
+        "Arrival Delay"
+    ],
+    "customer_features": [
+        "Gender",
+        "Age",
+        "Customer Type",
+        "Type of Travel",
+        "Class"
+    ],
+    "service_quality_features": [
+        "Departure and Arrival Time Convenience",
+        "Ease of Online Booking",
+        "Check-in Service",
+        "Online Boarding",
+        "Gate Location",
+        "On-board Service",
+        "Seat Comfort",
+        "Leg Room Service",
+        "Cleanliness",
+        "Food and Drink",
+        "In-flight Service",
+        "In-flight Wifi Service",
+        "In-flight Entertainment",
+        "Baggage Handling"
+    ],
+    "operational_features": [
+        "Flight Distance",
+        "Departure Delay",
+        "Arrival Delay"
+    ],
+    "categorical_features": [
+        "Gender",
+        "Customer Type",
+        "Type of Travel",
+        "Class"
+    ],
+    "numerical_features": [
+        "Age",
+        "Departure and Arrival Time Convenience",
+        "Ease of Online Booking",
+        "Check-in Service",
+        "Online Boarding",
+        "Gate Location",
+        "On-board Service",
+        "Seat Comfort",
+        "Leg Room Service",
+        "Cleanliness",
+        "Food and Drink",
+        "In-flight Service",
+        "In-flight Wifi Service",
+        "In-flight Entertainment",
+        "Baggage Handling",
+        "Flight Distance",
+        "Departure Delay",
+        "Arrival Delay"
+    ],
+    "best_params": {
+        "border_count": 128,
+        "bagging_temperature": 0,
+        "random_strength": 1,
+        "depth": 8,
+        "learning_rate": 0.05,
+        "l2_leaf_reg": 9,
+        "iterations": 800
+    },
+    "final_metrics": {
+        "accuracy": 0.9654,
+        "precision_satisfied": 0.9739,
+        "recall_satisfied": 0.9456,
+        "f1_satisfied": 0.9595,
+        "roc_auc": 0.9955,
+        "at_risk_detection_rate": 0.9805
+    },
+    "recommendation_readiness_score": 97.16,
+    "high_confidence_rate": 0.9213,
+    "model_path": "..\\models\\catboost_satisfaction_model.cbm",
+    "feature_importance_path": "..\\reports\\feature_importance.csv"
+}
