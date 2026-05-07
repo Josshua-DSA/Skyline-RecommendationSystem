@@ -1,0 +1,25 @@
+PlanningSR.txt
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+.venv/
+venv/
+env/
+
+# Logs
+logs/
+*.log
+
+.DS_Store
+
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+
+*.pkl
+*.joblib
+
+.env
