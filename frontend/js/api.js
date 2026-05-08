@@ -17,6 +17,39 @@ async function apiFetch(endpoint, options = {}) {
   }
 }
 
+let isUsingDemoData = false;
+
+function setDataSourceBadge(mode, detail = '') {
+  const actions = document.querySelector('.topbar-actions');
+  if (!actions) return;
+
+  let badge = document.getElementById('data-source-badge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'data-source-badge';
+    badge.className = 'data-badge';
+    actions.appendChild(badge);
+  }
+
+  const isDemo = mode === 'demo';
+  badge.style.background = isDemo ? 'rgba(240,180,41,0.08)' : 'rgba(62,207,178,0.08)';
+  badge.style.borderColor = isDemo ? 'rgba(240,180,41,0.2)' : 'rgba(62,207,178,0.2)';
+  badge.style.color = isDemo ? 'var(--accent-gold)' : 'var(--accent-green)';
+  badge.title = detail;
+  badge.innerHTML = `<span>${isDemo ? 'Demo Data' : 'Live API'}</span>`;
+}
+
+function markDemoData(endpoint) {
+  isUsingDemoData = true;
+  setDataSourceBadge('demo', `Fallback data used for ${endpoint || 'dashboard'}`);
+}
+
+function markLiveData() {
+  if (!isUsingDemoData) {
+    setDataSourceBadge('live', 'Data loaded from backend API');
+  }
+}
+
 const API = {
   getExecutiveSummary: () => apiFetch('/executive-summary'),
   getMetrics: () => apiFetch('/metrics'),
@@ -48,25 +81,8 @@ const MOCK = {
       { feature: "Online Boarding", importance: 6.72 },
       { feature: "Class", importance: 5.37 }
     ],
-    model_accuracy: 0.9654,
     total_recommendations_possible: 129820,
     high_risk_passengers: 73452
-  },
-  metrics: {
-    accuracy: 0.9654,
-    precision: 0.9739,
-    precision_satisfied: 0.9739,
-    recall: 0.9805,
-    recall_satisfied: 0.9456,
-    f1_score: 0.9595,
-    f1_satisfied: 0.9595,
-    roc_auc: 0.9955,
-    at_risk_detection_rate: 0.9805,
-    confusion_matrix: null,
-    confusion_matrix_available: false,
-    total_samples: 129880,
-    satisfied_rate: 0.4345,
-    model_type: "CatBoost Classifier"
   },
   featureImportance: {
     features: ["In-flight Wifi Service","Type of Travel","Customer Type","Online Boarding","Class","Baggage Handling","Check-in Service","Age","Seat Comfort","In-flight Entertainment","Gate Location","In-flight Service","Flight Distance","On-board Service","Cleanliness","Leg Room Service","Departure and Arrival Time Convenience","Ease of Online Booking","Arrival Delay","Food and Drink","Departure Delay","Gender"],
@@ -236,7 +252,18 @@ const MOCK = {
   }
 };
 
-async function getData(apiCall, fallback) {
+async function getData(apiCall, fallback, options = {}) {
   const result = await apiCall();
-  return result || fallback;
+  if (result) {
+    markLiveData();
+    return result;
+  }
+
+  const allowFallback = options.allowFallback !== false;
+  if (allowFallback && fallback) {
+    markDemoData(options.label);
+    return fallback;
+  }
+
+  return null;
 }

@@ -1,9 +1,11 @@
 let _selectedPassengerId = 1;
 
 async function initPersonalizedDemo() {
-  const passengers = await getData(API.getSamplePassengers, MOCK.samplePassengers);
+  const passengers = await getData(API.getSamplePassengers, MOCK.samplePassengers, {
+    label: 'sample passengers'
+  });
   buildPassengerSelector(passengers);
-  await loadPassengerRecommendation(_selectedPassengerId);
+  await loadPassengerRecommendation(_selectedPassengerId, { allowFallback: true });
 }
 
 function buildPassengerSelector(passengers) {
@@ -24,18 +26,44 @@ function buildPassengerSelector(passengers) {
   });
 }
 
-async function loadPassengerRecommendation(id) {
+async function loadPassengerRecommendation(id, options = {}) {
   // Show loading in rec list
   const recList = document.getElementById('rec-list');
   if (recList) recList.innerHTML = `<div class="loading-overlay" style="padding:40px"><div class="spinner"></div></div>`;
 
-  const data = await getData(() => API.getRecommendation(id), MOCK.recommendations[id] || MOCK.recommendations[1]);
-  if (!data) return;
+  const data = await getData(
+    () => API.getRecommendation(id),
+    MOCK.recommendations[id] || MOCK.recommendations[1],
+    {
+      allowFallback: options.allowFallback === true,
+      label: `sample recommendation ${id}`
+    }
+  );
+
+  if (!data) {
+    renderRecommendationError();
+    return;
+  }
 
   renderProfile(data.passenger_profile, id);
   renderPrediction(data);
   renderProblems(data.problematic_services || []);
   renderRecommendations(data.recommendations || []);
+}
+
+function renderRecommendationError() {
+  const recList = document.getElementById('rec-list');
+  if (recList) {
+    recList.innerHTML = `
+      <div class="disclaimer" style="border-color:rgba(255,77,109,0.25);background:rgba(255,77,109,0.08);">
+        <span class="disclaimer-icon">Warning</span>
+        <span>Backend API is unavailable. User-selected recommendation results were not replaced with demo data.</span>
+      </div>
+    `;
+  }
+
+  const count = document.getElementById('rec-count');
+  if (count) count.textContent = 'Unavailable';
 }
 
 function renderProfile(profile, id) {

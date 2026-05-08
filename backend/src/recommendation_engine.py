@@ -72,8 +72,9 @@ def get_ensemble_recommendations(passenger_data: dict) -> dict:
     combined_sorted = sorted(combined, key=lambda x: x["ensemble_score"], reverse=True)
     top_recs = combined_sorted[:5]
     
-    # Predict before & after
-    pred_before = predict_single(passenger_data)
+    # Predict before & after. Exported sample passengers already include model
+    # predictions, so reuse them instead of recalculating CatBoost inference.
+    pred_before = _prediction_from_exported_sample(passenger_data) or predict_single(passenger_data)
     
     total_uplift = sum(r["satisfaction_uplift"] for r in top_recs)
     prob_after = min(0.98, pred_before["probability_satisfied"] + total_uplift * 0.6)
@@ -103,6 +104,30 @@ def _get_problematic_services(passenger_data: dict) -> list:
         elif rating == 3:
             problems.append({"feature": feat, "rating": rating, "severity": "moderate"})
     return sorted(problems, key=lambda x: x["rating"])
+
+
+def _prediction_from_exported_sample(passenger_data: dict):
+    probability = passenger_data.get("satisfied_probability")
+    if probability is None:
+        return None
+
+    try:
+        probability_satisfied = min(0.99, max(0.0, float(probability)))
+    except (TypeError, ValueError):
+        return None
+
+    label = passenger_data.get("predicted_satisfaction")
+    prediction = 1 if label == "Satisfied" else 0
+    if label not in {"Satisfied", "Neutral or Dissatisfied"}:
+        prediction = 1 if probability_satisfied >= 0.5 else 0
+        label = "Satisfied" if prediction == 1 else "Neutral or Dissatisfied"
+
+    return {
+        "prediction": prediction,
+        "prediction_label": label,
+        "probability_satisfied": round(probability_satisfied, 4),
+        "probability_dissatisfied": round(1 - probability_satisfied, 4),
+    }
 
 
 def _summarize_profile(pd: dict) -> dict:

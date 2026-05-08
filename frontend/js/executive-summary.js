@@ -1,7 +1,7 @@
 async function initExecutiveSummary() {
   const [summary, metrics] = await Promise.all([
     getData(API.getExecutiveSummary, MOCK.executiveSummary),
-    getData(API.getMetrics, MOCK.metrics)
+    getData(API.getMetrics, null, { allowFallback: false, label: 'model metrics' })
   ]);
 
   // KPI counters
@@ -28,10 +28,10 @@ async function initExecutiveSummary() {
 
   // Accuracy strip
   const accAcc = document.getElementById('acc-accuracy');
-  if (accAcc) accAcc.textContent = fmtPct(metrics.accuracy);
+  if (accAcc) accAcc.textContent = metricDisplay(metrics?.accuracy, 'percent');
 
   const accAuc = document.getElementById('acc-auc');
-  if (accAuc) accAuc.textContent = metrics.roc_auc.toFixed(4);
+  if (accAuc) accAuc.textContent = metricDisplay(metrics?.roc_auc, 'decimal');
 
   const accRec = document.getElementById('acc-rec');
   if (accRec) { accRec.textContent = '—'; animateCounter(accRec, summary.total_recommendations_possible); }
@@ -85,4 +85,10 @@ function buildFactorList(factors) {
       <div class="factor-pct">${f.importance.toFixed(1)}%</div>
     </div>
   `).join('');
+}
+
+function metricDisplay(value, type = 'decimal') {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) return 'Unavailable';
+  return type === 'percent' ? fmtPct(numericValue) : numericValue.toFixed(4);
 }

@@ -137,8 +137,27 @@ function staggerFadeIn(els) {
 }
 
 // ── INIT ──
+async function hydrateModelFooter() {
+  const samplesEl = document.getElementById('footer-samples');
+  const accuracyEl = document.getElementById('footer-accuracy');
+  const aucEl = document.getElementById('footer-auc');
+
+  const metrics = await API.getMetrics();
+  if (!metrics) {
+    if (samplesEl) samplesEl.textContent = 'Unavailable';
+    if (accuracyEl) accuracyEl.textContent = 'Unavailable';
+    if (aucEl) aucEl.textContent = 'Unavailable';
+    return;
+  }
+
+  if (samplesEl) samplesEl.textContent = Number.isFinite(Number(metrics.total_samples)) ? `${fmt(metrics.total_samples)} passengers` : 'Unavailable';
+  if (accuracyEl) accuracyEl.textContent = Number.isFinite(Number(metrics.accuracy)) ? fmtPct(metrics.accuracy) : 'Unavailable';
+  if (aucEl) aucEl.textContent = Number.isFinite(Number(metrics.roc_auc)) ? Number(metrics.roc_auc).toFixed(4) : 'Unavailable';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   buildNav();
+  hydrateModelFooter();
   const hash = window.location.hash.replace('#', '') || 'executive-summary';
   navigateTo(hash);
 });

@@ -1,5 +1,5 @@
 async function initBusinessImpactSimulation() {
-  await runBusinessSimulation();
+  await runBusinessSimulation({ allowLocalFallback: true, isInitialLoad: true });
 }
 
 function resetSimDefaults() {
@@ -16,7 +16,7 @@ function resetSimDefaults() {
   document.getElementById('sim-op-cost').value = 80000;
 }
 
-async function runBusinessSimulation() {
+async function runBusinessSimulation(options = {}) {
   const params = {
     avg_ticket_value: +document.getElementById('sim-ticket').value || 850,
     monthly_passengers: +document.getElementById('sim-volume').value || 10000,
@@ -28,11 +28,46 @@ async function runBusinessSimulation() {
     monthly_operating_cost: +document.getElementById('sim-op-cost').value || 80000
   };
 
-  const result = await getData(() => API.runSimulation(params), null) || localSimulate(params);
+  const result = await getData(
+    () => API.runSimulation(params),
+    options.allowLocalFallback ? localSimulate(params) : null,
+    {
+      allowFallback: !!options.allowLocalFallback,
+      label: 'business impact simulation'
+    }
+  );
+
+  if (!result) {
+    renderSimulationError(options.isInitialLoad);
+    return;
+  }
 
   renderScenarios(result.scenarios);
   renderSimChart(result.scenarios);
   renderSimTable(result.scenarios);
+}
+
+function renderSimulationError(isInitialLoad = false) {
+  const message = isInitialLoad
+    ? 'Simulation data is unavailable because the backend API could not be reached.'
+    : 'Simulation failed because the backend API is unavailable. User-entered parameters were not replaced with demo results.';
+
+  const tbody = document.getElementById('sim-table-body');
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="color:var(--accent-red);padding:20px;text-align:center;">
+          ${message}
+        </td>
+      </tr>
+    `;
+  }
+
+  ['sc-cons-rev', 'sc-cons-roi', 'sc-cons-pay', 'sc-exp-rev', 'sc-exp-roi', 'sc-exp-pay', 'sc-agg-rev', 'sc-agg-roi', 'sc-agg-pay']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = 'Unavailable';
+    });
 }
 
 function localSimulate(params) {

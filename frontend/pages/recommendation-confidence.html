@@ -11,17 +11,17 @@
   <!-- Story Questions -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;" id="story-questions">
     <div class="card" style="border-color:rgba(56,139,253,0.25);padding:18px;">
-      <div style="font-size:20px;margin-bottom:8px;">🔍</div>
+      <div style="font-size:20px;margin-bottom:8px;"></div>
       <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">How trustworthy is this system?</div>
-      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Overall accuracy of <strong style="color:var(--accent-blue)" id="story-acc">96.1%</strong> — the model correctly classifies passengers 19 out of 20 times.</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Overall accuracy of <strong style="color:var(--accent-blue)" id="story-acc">Loading...</strong> from the saved CatBoost evaluation.</div>
     </div>
     <div class="card" style="border-color:rgba(62,207,178,0.25);padding:18px;">
-      <div style="font-size:20px;margin-bottom:8px;">🎯</div>
+      <div style="font-size:20px;margin-bottom:8px;"></div>
       <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">How well does it detect at-risk passengers?</div>
-      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Recall of <strong style="color:var(--accent-green)" id="story-recall">96.4%</strong> — we catch nearly all dissatisfied passengers before they churn.</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Recall of <strong style="color:var(--accent-green)" id="story-recall">Loading...</strong> for at-risk passenger detection.</div>
     </div>
     <div class="card" style="border-color:rgba(155,114,242,0.25);padding:18px;">
-      <div style="font-size:20px;margin-bottom:8px;">⚡</div>
+      <div style="font-size:20px;margin-bottom:8px;"></div>
       <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">What makes recommendations effective?</div>
       <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;" id="top-feature-summary">Top features: <strong style="color:var(--accent-purple)">Loading...</strong></div>
     </div>
@@ -93,8 +93,7 @@
       </div>
       <canvas id="chart-roc" height="220"></canvas>
       <div class="story-block" id="auc-story">
-        An <strong>AUC of 0.9923</strong> means the system can distinguish satisfied from dissatisfied passengers 
-        with 99.2% reliability — far exceeding the 0.80 threshold for a production-grade recommendation engine.
+        Loading ROC-AUC from the saved model evaluation.
       </div>
     </div>
 

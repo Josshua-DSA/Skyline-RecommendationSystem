@@ -3,6 +3,7 @@ PlanningSR.txt
 .venv/
 venv/
 env/
+.vscode/
 # Logs
 logs/
 *.log

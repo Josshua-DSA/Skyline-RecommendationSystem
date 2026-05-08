@@ -1,6 +1,6 @@
 async function initRecommendationConfidence() {
   const [metrics, fi] = await Promise.all([
-    getData(API.getMetrics, MOCK.metrics),
+    getData(API.getMetrics, null, { allowFallback: false, label: 'model metrics' }),
     getData(API.getFeatureImportance, MOCK.featureImportance)
   ]);
 
@@ -9,21 +9,21 @@ async function initRecommendationConfidence() {
   const recall = metricValue(metrics, 'recall', metricValue(metrics, 'at_risk_detection_rate', metricValue(metrics, 'recall_satisfied')));
   const f1Score = metricValue(metrics, 'f1_score', metricValue(metrics, 'f1_satisfied'));
   const auc = metricValue(metrics, 'roc_auc');
-  const totalSamples = metrics.total_samples || MOCK.metrics.total_samples;
+  const totalSamples = metricValue(metrics, 'total_samples');
   updateMetricNarratives(fi, { auc, totalSamples });
 
   // Story questions update
-  document.getElementById('story-acc').textContent = fmtPct(accuracy);
-  document.getElementById('story-recall').textContent = fmtPct(recall);
+  document.getElementById('story-acc').textContent = metricLabel(accuracy);
+  document.getElementById('story-recall').textContent = metricLabel(recall);
 
   // Metric rings
-  setRingMetric('accuracy', accuracy, fmtPct(accuracy, 1));
-  setRingMetric('precision', precision, fmtPct(precision, 1));
-  setRingMetric('recall', recall, fmtPct(recall, 1));
-  setRingMetric('f1', f1Score, fmtPct(f1Score, 1));
+  setRingMetric('accuracy', accuracy, metricLabel(accuracy, 1));
+  setRingMetric('precision', precision, metricLabel(precision, 1));
+  setRingMetric('recall', recall, metricLabel(recall, 1));
+  setRingMetric('f1', f1Score, metricLabel(f1Score, 1));
 
   // Confusion matrix
-  renderConfusionMatrix(metrics.confusion_matrix, totalSamples);
+  renderConfusionMatrix(metrics?.confusion_matrix, totalSamples);
 
   // ROC curve
   drawROCCurve('chart-roc', auc);
@@ -32,14 +32,18 @@ async function initRecommendationConfidence() {
   drawFeatureImportance('chart-feature-importance', fi, 10);
 
   // Segment confidence cards
-  buildSegmentConfidence();
+  buildSegmentConfidence(metrics);
 
   staggerFadeIn(document.querySelectorAll('.conf-metric-card'));
 }
 
-function metricValue(metrics, key, fallback = 0) {
+function metricValue(metrics, key, fallback = null) {
   const value = metrics?.[key];
   return Number.isFinite(Number(value)) ? Number(value) : fallback;
+}
+
+function metricLabel(value, decimals = 1) {
+  return Number.isFinite(Number(value)) ? fmtPct(Number(value), decimals) : 'Unavailable';
 }
 
 function setRingMetric(key, value, label) {
@@ -49,7 +53,7 @@ function setRingMetric(key, value, label) {
   const ring = document.getElementById('ring-' + key);
   if (ring) {
     const circumference = 201;
-    const bounded = Math.max(0, Math.min(1, Number(value) || 0));
+    const bounded = Number.isFinite(Number(value)) ? Math.max(0, Math.min(1, Number(value))) : 0;
     const offset = circumference - (circumference * bounded);
     setTimeout(() => {
       ring.style.transition = 'stroke-dashoffset 1.2s ease';
@@ -70,7 +74,7 @@ function renderConfusionMatrix(cm, totalSamples) {
     const errEl = document.getElementById('cm-errors');
     if (errEl) errEl.textContent = 'not exported';
     const samplesBadge = document.getElementById('cm-samples-badge');
-    if (samplesBadge) samplesBadge.textContent = `${fmt(totalSamples)} samples`;
+    if (samplesBadge) samplesBadge.textContent = Number.isFinite(Number(totalSamples)) ? `${fmt(totalSamples)} samples` : 'samples unavailable';
     const story = document.getElementById('cm-story');
     if (story) {
       story.innerHTML = 'Confusion matrix was not exported in the current artifact. The dashboard still reports accuracy, precision, recall, F1, and AUC from the saved CatBoost evaluation.';
@@ -96,18 +100,21 @@ function renderConfusionMatrix(cm, totalSamples) {
 }
 
 function updateMetricNarratives(fi, values) {
-  const aucText = Number(values.auc).toFixed(4);
-  const reliabilityPct = (Number(values.auc) * 100).toFixed(1);
+  const hasAuc = Number.isFinite(Number(values.auc));
+  const aucText = hasAuc ? Number(values.auc).toFixed(4) : 'Unavailable';
+  const reliabilityPct = hasAuc ? (Number(values.auc) * 100).toFixed(1) : null;
 
   const rocSubtitle = document.getElementById('roc-subtitle');
-  if (rocSubtitle) rocSubtitle.textContent = `AUC = ${aucText} - model discrimination ability`;
+  if (rocSubtitle) rocSubtitle.textContent = hasAuc ? `AUC = ${aucText} - model discrimination ability` : 'AUC unavailable';
 
   const aucBadge = document.getElementById('auc-badge');
-  if (aucBadge) aucBadge.textContent = `AUC ${aucText}`;
+  if (aucBadge) aucBadge.textContent = hasAuc ? `AUC ${aucText}` : 'AUC unavailable';
 
   const aucStory = document.getElementById('auc-story');
   if (aucStory) {
-    aucStory.innerHTML = `An <strong>AUC of ${aucText}</strong> means the system can distinguish satisfied from dissatisfied passengers with about ${reliabilityPct}% ranking reliability on the saved evaluation set.`;
+    aucStory.innerHTML = hasAuc
+      ? `An <strong>AUC of ${aucText}</strong> means the system can distinguish satisfied from dissatisfied passengers with about ${reliabilityPct}% ranking reliability on the saved evaluation set.`
+      : 'ROC-AUC is unavailable because the backend metrics endpoint did not return model evaluation data.';
   }
 
   const topFeatures = (fi?.features || []).slice(0, 3);
@@ -124,18 +131,29 @@ function updateMetricNarratives(fi, values) {
   }
 }
 
-function buildSegmentConfidence() {
-  const segments = [
-    { label: 'Business Class', confidence: 0.94, color: 'var(--accent-blue)', note: 'Highest precision' },
-    { label: 'Returning Customers', confidence: 0.91, color: 'var(--accent-green)', note: 'Strong signal' },
-    { label: 'Business Travel', confidence: 0.89, color: 'var(--accent-purple)', note: 'Reliable predictions' },
-    { label: 'Economy Class', confidence: 0.83, color: 'var(--accent-gold)', note: 'Good coverage' },
-    { label: 'Personal Travel', confidence: 0.78, color: 'var(--accent-gold)', note: 'Moderate signal' },
-    { label: 'First-time Customers', confidence: 0.71, color: 'var(--accent-red)', note: 'Lower signal — less data' },
-  ];
-
+function buildSegmentConfidence(metrics) {
   const container = document.getElementById('seg-confidence');
   if (!container) return;
+
+  const highConfidenceRate = metricValue(metrics, 'high_confidence_rate');
+  if (!Number.isFinite(Number(highConfidenceRate))) {
+    container.innerHTML = `
+      <div class="disclaimer" style="grid-column:1/-1;">
+        <span class="disclaimer-icon">Info</span>
+        <span>Segment-level confidence is not exported by the current metrics API, so no hardcoded segment confidence values are shown.</span>
+      </div>
+    `;
+    return;
+  }
+
+  const segments = [
+    {
+      label: 'Overall High-Confidence Rate',
+      confidence: highConfidenceRate,
+      color: 'var(--accent-green)',
+      note: 'Loaded from model metadata'
+    },
+  ];
 
   container.innerHTML = segments.map(s => `
     <div class="card" style="padding:16px;text-align:center;">
