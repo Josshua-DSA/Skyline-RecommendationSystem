@@ -1,0 +1,143 @@
+<div class="page-section">
+  <div class="section-header">
+    <div class="section-label">Section 06</div>
+    <h1 class="section-title">Business Impact Simulation</h1>
+    <p class="section-desc">
+      Adjust assumptions to model the financial impact of deploying the recommendation engine.
+      Results are transparently assumption-based — not actuals.
+    </p>
+  </div>
+
+  <div class="disclaimer" style="margin-bottom:24px;">
+    <span class="disclaimer-icon">⚠️</span>
+    <div>
+      <strong style="color:var(--accent-gold);">Assumption-Based Simulation.</strong>
+      Business impact is modeled using adjustable parameters. Actual impact requires booking, fare, 
+      conversion, and A/B test data. These figures are for strategic planning purposes only 
+      and should not be used for financial reporting.
+    </div>
+  </div>
+
+  <div class="sim-layout">
+
+    <!-- LEFT: Input Panel -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card">
+        <div class="card-header" style="margin-bottom:16px;">
+          <div class="card-title">⚙️ Simulation Parameters</div>
+          <button class="btn btn-ghost" onclick="resetSimDefaults()" style="font-size:12px;padding:6px 12px;">Reset</button>
+        </div>
+
+        <div class="form-group">
+          <label>Avg. Ticket Value (USD)</label>
+          <input type="number" id="sim-ticket" value="850" min="100" max="5000" />
+        </div>
+        <div class="form-group">
+          <label>Monthly Passenger Volume</label>
+          <input type="number" id="sim-volume" value="10000" min="100" />
+        </div>
+        <div class="form-group">
+          <label>Recommendation Adoption Rate: <strong id="adoption-val">30%</strong></label>
+          <input type="range" id="sim-adoption" min="5" max="80" value="30" oninput="document.getElementById('adoption-val').textContent=this.value+'%'" />
+        </div>
+        <div class="form-group">
+          <label>Conversion Lift: <strong id="conv-val">5%</strong></label>
+          <input type="range" id="sim-conversion" min="1" max="20" value="5" oninput="document.getElementById('conv-val').textContent=this.value+'%'" />
+        </div>
+        <div class="form-group">
+          <label>Retention Lift: <strong id="ret-val">3%</strong></label>
+          <input type="range" id="sim-retention" min="1" max="15" value="3" oninput="document.getElementById('ret-val').textContent=this.value+'%'" />
+        </div>
+        <div class="form-group">
+          <label>Ancillary Revenue / Passenger (USD)</label>
+          <input type="number" id="sim-ancillary" value="120" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Implementation Cost (USD)</label>
+          <input type="number" id="sim-impl-cost" value="500000" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Monthly Operating Cost (USD)</label>
+          <input type="number" id="sim-op-cost" value="80000" min="0" />
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="runBusinessSimulation()">
+          ▶ Run Simulation
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <!-- Scenario Cards -->
+      <div class="scenario-cards" id="scenario-cards">
+        <div class="scenario-card conservative">
+          <div class="scenario-label" style="color:var(--text-muted);">Conservative</div>
+          <div class="scenario-revenue" id="sc-cons-rev">—</div>
+          <div class="scenario-period">Annual Revenue Lift</div>
+          <div class="scenario-stats">
+            <div><span class="scenario-stat-val" id="sc-cons-roi">—</span>ROI</div>
+            <div><span class="scenario-stat-val" id="sc-cons-pay">—</span>Payback</div>
+          </div>
+        </div>
+        <div class="scenario-card expected">
+          <div class="scenario-label" style="color:var(--accent-green);">★ Expected</div>
+          <div class="scenario-revenue" style="color:var(--accent-green);" id="sc-exp-rev">—</div>
+          <div class="scenario-period">Annual Revenue Lift</div>
+          <div class="scenario-stats">
+            <div><span class="scenario-stat-val" style="color:var(--accent-green);" id="sc-exp-roi">—</span>ROI</div>
+            <div><span class="scenario-stat-val" style="color:var(--accent-green);" id="sc-exp-pay">—</span>Payback</div>
+          </div>
+        </div>
+        <div class="scenario-card aggressive">
+          <div class="scenario-label" style="color:var(--accent-gold);">Aggressive</div>
+          <div class="scenario-revenue" style="color:var(--accent-gold);" id="sc-agg-rev">—</div>
+          <div class="scenario-period">Annual Revenue Lift</div>
+          <div class="scenario-stats">
+            <div><span class="scenario-stat-val" style="color:var(--accent-gold);" id="sc-agg-roi">—</span>ROI</div>
+            <div><span class="scenario-stat-val" style="color:var(--accent-gold);" id="sc-agg-pay">—</span>Payback</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Revenue Lift by Scenario</div>
+          <div class="card-subtitle">Monthly and annual comparison across scenarios</div>
+        </div>
+        <div style="height:280px;position:relative;">
+          <canvas id="chart-simulation"></canvas>
+        </div>
+      </div>
+
+      <!-- KPI Detail Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Detailed Output by Scenario</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="segment-table" id="sim-detail-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th style="color:var(--text-muted)">Conservative</th>
+                <th style="color:var(--accent-green)">Expected</th>
+                <th style="color:var(--accent-gold)">Aggressive</th>
+              </tr>
+            </thead>
+            <tbody id="sim-table-body">
+              <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">Run simulation to see results</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="disclaimer" style="margin-top:16px;">
+          <span class="disclaimer-icon">⚠️</span>
+          <span>All figures are estimates based on user-defined assumptions. Conservative = 60% of base assumptions, Expected = base, Aggressive = 140–150% of base assumptions.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

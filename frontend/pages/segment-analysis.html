@@ -1,0 +1,73 @@
+<div class="page-section">
+  <div class="section-header">
+    <div class="section-label">Section 04</div>
+    <h1 class="section-title">Segment Analysis</h1>
+    <p class="section-desc">
+      Data-driven breakdown of satisfaction rates, service ratings, and opportunity scores
+      across all major passenger segments — to prioritize recommendation targeting.
+    </p>
+  </div>
+
+  <!-- Segment Tabs -->
+  <div class="tabs" id="segment-tabs">
+    <div class="tab active" data-seg="travel_type">Travel Type</div>
+    <div class="tab" data-seg="class">Class</div>
+    <div class="tab" data-seg="customer_type">Customer Type</div>
+    <div class="tab" data-seg="age_group">Age Group</div>
+    <div class="tab" data-seg="flight_distance_group">Flight Distance</div>
+  </div>
+
+  <!-- Segment Summary Cards -->
+  <div id="segment-cards" class="grid-auto" style="margin-bottom:24px;">
+    <div class="loading-overlay"><div class="spinner"></div></div>
+  </div>
+
+  <!-- Segment Details Row -->
+  <div class="grid-2" style="margin-bottom:24px;">
+
+    <!-- Satisfaction Rate Bar Chart -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Satisfaction Rate by Segment</div>
+        <div class="card-subtitle">% of satisfied passengers per group</div>
+      </div>
+      <div style="height:240px;position:relative;">
+        <canvas id="chart-seg-satisfaction"></canvas>
+      </div>
+    </div>
+
+    <!-- Radar – Service Ratings -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Service Rating Profile</div>
+        <div class="card-subtitle">Avg ratings across key services per segment</div>
+      </div>
+      <canvas id="chart-seg-radar" height="240"></canvas>
+    </div>
+  </div>
+
+  <!-- Segment Table -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Segment Detail Table</div>
+      <div class="card-subtitle">Passenger count, satisfaction rate, and opportunity score</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="segment-table" id="segment-table">
+        <thead>
+          <tr>
+            <th>Segment</th>
+            <th>Passengers</th>
+            <th>Share</th>
+            <th>Satisfaction Rate</th>
+            <th>Opportunity Score</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody id="segment-table-body">
+          <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

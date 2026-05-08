@@ -1,0 +1,178 @@
+<div class="page-section">
+  <div class="section-header">
+    <div class="section-label">Section 02</div>
+    <h1 class="section-title">Recommendation Engine Confidence</h1>
+    <p class="section-desc">
+      How trustworthy is our recommendation system? We translate model performance into business language —
+      so you can make confident decisions based on data.
+    </p>
+  </div>
+
+  <!-- Story Questions -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;" id="story-questions">
+    <div class="card" style="border-color:rgba(56,139,253,0.25);padding:18px;">
+      <div style="font-size:20px;margin-bottom:8px;">🔍</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">How trustworthy is this system?</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Overall accuracy of <strong style="color:var(--accent-blue)" id="story-acc">96.1%</strong> — the model correctly classifies passengers 19 out of 20 times.</div>
+    </div>
+    <div class="card" style="border-color:rgba(62,207,178,0.25);padding:18px;">
+      <div style="font-size:20px;margin-bottom:8px;">🎯</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">How well does it detect at-risk passengers?</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Recall of <strong style="color:var(--accent-green)" id="story-recall">96.4%</strong> — we catch nearly all dissatisfied passengers before they churn.</div>
+    </div>
+    <div class="card" style="border-color:rgba(155,114,242,0.25);padding:18px;">
+      <div style="font-size:20px;margin-bottom:8px;">⚡</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">What makes recommendations effective?</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Top features: <strong style="color:var(--accent-purple)">Online Boarding, Wifi, Entertainment</strong> — these alone drive over 45% of satisfaction outcomes.</div>
+    </div>
+  </div>
+
+  <!-- 4 Metric Rings -->
+  <div class="metrics-quartet" id="metrics-quartet">
+    <div class="conf-metric-card">
+      <div class="conf-metric-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(56,139,253,0.12)" stroke-width="8"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#388BFD" stroke-width="8"
+            stroke-dasharray="201" stroke-dashoffset="8" stroke-linecap="round" id="ring-accuracy"/>
+        </svg>
+        <div class="conf-ring-value" style="color:var(--accent-blue)" id="val-accuracy">—</div>
+      </div>
+      <div class="conf-metric-name">Accuracy</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Overall correctness</div>
+    </div>
+    <div class="conf-metric-card">
+      <div class="conf-metric-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(62,207,178,0.12)" stroke-width="8"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#3ECFB2" stroke-width="8"
+            stroke-dasharray="201" stroke-dashoffset="8" stroke-linecap="round" id="ring-precision"/>
+        </svg>
+        <div class="conf-ring-value" style="color:var(--accent-green)" id="val-precision">—</div>
+      </div>
+      <div class="conf-metric-name">Precision</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Recommendation accuracy</div>
+    </div>
+    <div class="conf-metric-card">
+      <div class="conf-metric-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(155,114,242,0.12)" stroke-width="8"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#9B72F2" stroke-width="8"
+            stroke-dasharray="201" stroke-dashoffset="8" stroke-linecap="round" id="ring-recall"/>
+        </svg>
+        <div class="conf-ring-value" style="color:var(--accent-purple)" id="val-recall">—</div>
+      </div>
+      <div class="conf-metric-name">Recall</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">At-risk detection rate</div>
+    </div>
+    <div class="conf-metric-card">
+      <div class="conf-metric-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(240,180,41,0.12)" stroke-width="8"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#F0B429" stroke-width="8"
+            stroke-dasharray="201" stroke-dashoffset="8" stroke-linecap="round" id="ring-f1"/>
+        </svg>
+        <div class="conf-ring-value" style="color:var(--accent-gold)" id="val-f1">—</div>
+      </div>
+      <div class="conf-metric-name">F1-Score</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Precision-recall balance</div>
+    </div>
+  </div>
+
+  <!-- ROC + Confusion Matrix Row -->
+  <div class="grid-2" style="margin-bottom:24px;">
+
+    <!-- ROC Curve -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">ROC Curve</div>
+          <div class="card-subtitle">AUC = 0.9923 — near-perfect discrimination ability</div>
+        </div>
+        <span class="badge badge-green">AUC 0.9923</span>
+      </div>
+      <canvas id="chart-roc" height="220"></canvas>
+      <div class="story-block">
+        An <strong>AUC of 0.9923</strong> means the system can distinguish satisfied from dissatisfied passengers 
+        with 99.2% reliability — far exceeding the 0.80 threshold for a production-grade recommendation engine.
+      </div>
+    </div>
+
+    <!-- Confusion Matrix -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Confusion Matrix</div>
+          <div class="card-subtitle">Prediction outcome breakdown on full dataset</div>
+        </div>
+        <span class="badge badge-blue">129,880 samples</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;">
+        <div style="writing-mode:vertical-rl;text-orientation:mixed;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);padding:10px 0;text-align:center;">Actual Label</div>
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+            <div style="text-align:center;font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);padding-bottom:6px;">Pred. Dissatisfied</div>
+            <div style="text-align:center;font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);padding-bottom:6px;">Pred. Satisfied</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="cm-grid">
+            <div class="cm-cell cm-cell-tn">
+              <div class="cm-number" style="color:var(--accent-green)" id="cm-tn">—</div>
+              <div class="cm-sublabel" style="color:var(--accent-green)">True Neg.</div>
+            </div>
+            <div class="cm-cell cm-cell-fp">
+              <div class="cm-number" style="color:var(--accent-red)" id="cm-fp">—</div>
+              <div class="cm-sublabel" style="color:var(--accent-red)">False Pos.</div>
+            </div>
+            <div class="cm-cell cm-cell-fn">
+              <div class="cm-number" style="color:var(--accent-red)" id="cm-fn">—</div>
+              <div class="cm-sublabel" style="color:var(--accent-red)">False Neg.</div>
+            </div>
+            <div class="cm-cell cm-cell-tp">
+              <div class="cm-number" style="color:var(--accent-green)" id="cm-tp">—</div>
+              <div class="cm-sublabel" style="color:var(--accent-green)">True Pos.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-block" style="margin-top:16px;">
+        Only <strong id="cm-errors">—</strong> misclassifications out of 129,880 passengers. 
+        False negatives (missed at-risk passengers) are kept extremely low — 
+        critical for ensuring no dissatisfied passenger is overlooked by the recommendation engine.
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Importance -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Feature Importance — What Drives Recommendations?</div>
+        <div class="card-subtitle">CatBoost SHAP-based feature contribution ranking</div>
+      </div>
+      <span class="badge badge-purple">Top 10 shown</span>
+    </div>
+    <div style="height:340px;position:relative;">
+      <canvas id="chart-feature-importance"></canvas>
+    </div>
+    <div class="story-block" style="margin-top:16px;">
+      <strong>Online Boarding (18.4%)</strong> and <strong>In-flight Wifi (15.3%)</strong> are the two strongest levers for improving satisfaction — 
+      together they account for <strong>33.7%</strong> of the model's decision logic. 
+      Targeted improvements here will yield the highest ROI across all passenger segments.
+    </div>
+  </div>
+
+  <!-- Segment Confidence -->
+  <div class="card" style="margin-top:20px;">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Segment Recommendation Confidence</div>
+        <div class="card-subtitle">Which passenger segments receive the most reliable recommendations?</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;" id="seg-confidence">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>

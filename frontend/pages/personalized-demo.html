@@ -1,0 +1,117 @@
+<div class="page-section">
+  <div class="section-header">
+    <div class="section-label">Section 03</div>
+    <h1 class="section-title">Personalized Recommendation Demo</h1>
+    <p class="section-desc">
+      Select a sample passenger profile to see the Hybrid Ensemble engine in action —
+      from risk detection to personalized service recommendations.
+    </p>
+  </div>
+
+  <!-- Passenger Selector -->
+  <div class="passenger-selector" id="passenger-selector">
+    <div style="font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
+      <span>Select passenger:</span>
+    </div>
+  </div>
+
+  <!-- Ensemble Method Badge -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:10px 16px;background:rgba(155,114,242,0.06);border:1px solid rgba(155,114,242,0.2);border-radius:8px;">
+    <span style="font-size:16px;">🔀</span>
+    <span style="font-size:12px;color:var(--text-secondary);">
+      <strong style="color:var(--accent-purple);">Hybrid Ensemble Method:</strong>
+      40% Rule-Based Logic + 60% CatBoost Feature-Importance Weighting
+    </span>
+  </div>
+
+  <!-- Demo Layout -->
+  <div class="demo-layout" id="demo-layout">
+
+    <!-- LEFT: Profile + Prediction -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Passenger Profile -->
+      <div class="card profile-card" id="profile-card">
+        <div class="card-header" style="margin-bottom:12px;">
+          <div class="card-title">Passenger Profile</div>
+          <span class="badge badge-blue" id="profile-badge">Loading…</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div class="profile-avatar" id="profile-avatar">👤</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;" id="profile-name">—</div>
+            <div style="font-size:12px;color:var(--text-muted);" id="profile-sub">—</div>
+          </div>
+        </div>
+        <div id="profile-attrs"></div>
+      </div>
+
+      <!-- Satisfaction Prediction -->
+      <div class="card" id="prediction-card">
+        <div class="card-header" style="margin-bottom:12px;">
+          <div class="card-title">Satisfaction Prediction</div>
+          <span class="badge" id="pred-badge">—</span>
+        </div>
+
+        <div class="prob-comparison">
+          <div class="prob-box prob-box-before">
+            <div class="prob-box-label" style="color:var(--accent-red);">Before Rec.</div>
+            <div class="prob-box-value" style="color:var(--accent-red);" id="prob-before">—</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">P(satisfied)</div>
+          </div>
+          <div class="prob-box prob-box-after">
+            <div class="prob-box-label" style="color:var(--accent-green);">After Rec.</div>
+            <div class="prob-box-value" style="color:var(--accent-green);" id="prob-after">—</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">P(satisfied)</div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+            <span style="color:var(--text-muted);">Satisfaction Uplift</span>
+            <span style="color:var(--accent-green);font-weight:700;" id="uplift-val">—</span>
+          </div>
+          <div class="progress-bar" style="height:10px;">
+            <div class="progress-fill" id="uplift-bar" style="width:0%;background:linear-gradient(90deg,var(--accent-red),var(--accent-green))"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problematic Services -->
+      <div class="card" id="problems-card">
+        <div class="card-header" style="margin-bottom:12px;">
+          <div class="card-title">⚠️ Problematic Services</div>
+          <span class="badge badge-red" id="problem-count">0 issues</span>
+        </div>
+        <div class="problems-list" id="problems-list">
+          <div style="color:var(--text-muted);font-size:13px;">Loading…</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Recommendations -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🎯 Personalized Recommendations</div>
+          <div class="card-subtitle">Ranked by ensemble confidence score</div>
+        </div>
+        <span class="badge badge-purple" id="rec-count">—</span>
+      </div>
+
+      <div class="rec-list" id="rec-list">
+        <div class="loading-overlay" style="padding:40px"><div class="spinner"></div></div>
+      </div>
+
+      <!-- Ensemble explanation -->
+      <div class="divider"></div>
+      <div style="padding:14px;background:rgba(56,139,253,0.04);border-radius:8px;font-size:12px;color:var(--text-secondary);line-height:1.7;">
+        <strong style="color:var(--text-primary);">How ensemble scoring works:</strong><br>
+        Each recommendation receives a score combining <span style="color:var(--accent-gold)">40% from rule-based logic</span> 
+        (triggered by low service ratings or delays) and <span style="color:var(--accent-blue)">60% from CatBoost feature importance</span> 
+        (weighted by how much each feature drives satisfaction). Only top-ranked recommendations are shown.
+      </div>
+    </div>
+  </div>
+</div>

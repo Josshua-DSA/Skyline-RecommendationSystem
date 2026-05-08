@@ -1,0 +1,134 @@
+<div class="page-section">
+  <!-- Section Header -->
+  <div class="section-header">
+    <div class="section-label">Section 01</div>
+    <h1 class="section-title">Executive Summary</h1>
+    <p class="section-desc">
+      High-level impact overview of the Hybrid Ensemble Recommendation System — 
+      designed for strategic decision-making and director-level reporting.
+    </p>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip" id="kpi-strip">
+    <div class="kpi-card" style="--card-accent:var(--gradient-blue)">
+      <div class="top-accent" style="background:var(--gradient-blue)"></div>
+      <div class="kpi-icon">👥</div>
+      <div class="kpi-label">Total Passengers</div>
+      <div class="kpi-number" style="color:var(--accent-blue)" id="kpi-total">—</div>
+      <div class="kpi-note">📂 Full dataset</div>
+    </div>
+    <div class="kpi-card">
+      <div class="top-accent" style="background:var(--gradient-green)"></div>
+      <div class="kpi-icon">😊</div>
+      <div class="kpi-label">Current Satisfaction Rate</div>
+      <div class="kpi-number" style="color:var(--accent-green)" id="kpi-sat-rate">—</div>
+      <div class="kpi-note" id="kpi-sat-count">— passengers satisfied</div>
+    </div>
+    <div class="kpi-card">
+      <div class="top-accent" style="background:linear-gradient(135deg,#9B72F2,#388BFD)"></div>
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-label">Predicted Uplift</div>
+      <div class="kpi-number" style="color:var(--accent-purple)" id="kpi-uplift">—</div>
+      <div class="kpi-note" id="kpi-new-rate">New rate: —</div>
+    </div>
+    <div class="kpi-card">
+      <div class="top-accent" style="background:var(--gradient-gold)"></div>
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-label">Est. Revenue Lift <span style="font-size:9px;opacity:.6">(Annual)</span></div>
+      <div class="kpi-number" style="color:var(--accent-gold)" id="kpi-revenue">—</div>
+      <div class="kpi-note">⚠️ Simulation-based</div>
+    </div>
+    <div class="kpi-card">
+      <div class="top-accent" style="background:linear-gradient(135deg,var(--accent-red),var(--accent-gold))"></div>
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-label">High-Risk Passengers</div>
+      <div class="kpi-number" style="color:var(--accent-red)" id="kpi-risk">—</div>
+      <div class="kpi-note">Actionable via recommendation</div>
+    </div>
+  </div>
+
+  <!-- Model Accuracy Strip -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;" id="acc-strip">
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Model Accuracy</div>
+      <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--accent-green)" id="acc-accuracy">—</div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">ROC-AUC</div>
+      <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--accent-blue)" id="acc-auc">—</div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Recommendable Passengers</div>
+      <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--accent-gold)" id="acc-rec">—</div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Approach</div>
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent-purple);margin-top:4px;" id="acc-model">—</div>
+    </div>
+  </div>
+
+  <!-- Bottom Row -->
+  <div class="summary-row">
+
+    <!-- Top Factors -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Top Factors Influencing Satisfaction</div>
+          <div class="card-subtitle">CatBoost feature importance — what drives passenger experience</div>
+        </div>
+        <span class="badge badge-blue">Model-driven</span>
+      </div>
+      <div class="factor-list" id="factor-list">
+        <div class="loading-overlay" style="padding:30px"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- Satisfaction Uplift Visual -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Satisfaction Uplift Projection</div>
+          <div class="card-subtitle">Before vs after recommendation adoption</div>
+        </div>
+        <span class="badge badge-green">+8.7 pp expected</span>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:20px;">
+        <div style="text-align:center;padding:16px;background:rgba(255,77,109,0.06);border:1px solid rgba(255,77,109,0.15);border-radius:12px;">
+          <div class="uplift-stat-label">Current Rate</div>
+          <div class="uplift-stat-value" style="color:var(--accent-red)" id="uplift-before">—</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(62,207,178,0.06);border:1px solid rgba(62,207,178,0.2);border-radius:12px;">
+          <div class="uplift-stat-label">Projected Rate</div>
+          <div class="uplift-stat-value" style="color:var(--accent-green)" id="uplift-after">—</div>
+        </div>
+      </div>
+
+      <!-- Satisfaction doughnut -->
+      <div style="max-width:260px;margin:0 auto;">
+        <canvas id="chart-satisfaction-split" height="180"></canvas>
+      </div>
+
+      <!-- Revenue summary -->
+      <div class="divider"></div>
+      <div class="grid-2">
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.7px">Monthly Lift (Simulated)</div>
+          <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent-gold)" id="rev-monthly">—</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.7px">Annual Lift (Simulated)</div>
+          <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent-gold)" id="rev-annual">—</div>
+        </div>
+      </div>
+
+      <div class="disclaimer" style="margin-top:16px;">
+        <span class="disclaimer-icon">⚠️</span>
+        <span>Revenue figures are assumption-based simulations for strategic planning only. Actual impact requires booking, conversion, and A/B test data.</span>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,26 @@
+@media (max-width: 1200px) {
+  .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+  .metrics-quartet { grid-template-columns: repeat(2, 1fr); }
+  .demo-layout { grid-template-columns: 1fr; }
+  .sim-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  :root { --sidebar-width: 220px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .summary-row { grid-template-columns: 1fr; }
+  .scenario-cards { grid-template-columns: 1fr; }
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .page-content { padding: 20px; }
+}
+
+@media (max-width: 700px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+  .topbar { padding: 0 16px; }
+  .kpi-strip { grid-template-columns: 1fr 1fr; }
+  .metrics-quartet { grid-template-columns: 1fr 1fr; }
+  .page-content { padding: 16px; }
+  .gap-bar-item { grid-template-columns: 120px 1fr auto; }
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AeroInsight — Airline Service Recommendation Dashboard</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a class="logo-mark" href="#">
+        <div class="logo-icon">✈</div>
+        <div class="logo-text">
+          <span class="logo-title">Skyline</span>
+          <span class="logo-subtitle">Business Recommendation</span>
+        </div>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Dashboard Sections</div>
+      <div id="sidebar-nav"></div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="model-badge">
+        <div class="model-dot"></div>
+        <div class="model-info">
+          <span class="model-name">CatBoost + Rules</span>
+          <span class="model-status">Hybrid Ensemble · Active</span>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--text-muted);line-height:1.5;padding:0 4px;">
+        Dataset: 129,880 passengers<br>
+        Accuracy: 96.12% · AUC: 0.9923
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Loading…</div>
+        <div class="topbar-subtitle" id="topbar-subtitle"></div>
+      </div>
+      <div class="topbar-actions">
+        <div class="data-badge">
+          <span>📅</span>
+          <span id="topbar-date"></span>
+        </div>
+        <div class="data-badge" style="background:rgba(62,207,178,0.08);border-color:rgba(62,207,178,0.2);color:var(--accent-green);">
+          <span>🎯</span>
+          <span>Hybrid Ensemble</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dynamic Page Content -->
+    <main class="page-content" id="page-content">
+      <div class="loading-overlay">
+        <div class="spinner"></div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- Core scripts -->
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+  // Set date
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' });
+</script>
+</body>
+</html>
