@@ -73,7 +73,7 @@ RECOMMENDATIONS_CATALOG = {
         "satisfaction_uplift": 0.07,
         "icon": "🏢",
         "category": "lounge",
-        "class_trigger": ["Economy", "Eco Plus"]
+        "class_trigger": ["Economy", "Economy Plus"]
     },
     "Loyalty Points Booster": {
         "trigger_feature": None,
@@ -82,7 +82,7 @@ RECOMMENDATIONS_CATALOG = {
         "satisfaction_uplift": 0.04,
         "icon": "⭐",
         "category": "loyalty",
-        "customer_type": "Returning Customer"
+        "customer_type": "Returning"
     }
 }
 

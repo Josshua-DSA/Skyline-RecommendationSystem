@@ -34,44 +34,54 @@ const API = {
 const MOCK = {
   executiveSummary: {
     total_passengers: 129880,
-    satisfied_count: 73460,
-    dissatisfied_count: 56420,
-    satisfaction_rate: 0.5656,
+    satisfied_count: 56428,
+    dissatisfied_count: 73452,
+    satisfaction_rate: 0.4345,
     predicted_uplift: 0.087,
-    predicted_new_satisfaction_rate: 0.6526,
+    predicted_new_satisfaction_rate: 0.5215,
     estimated_revenue_lift_monthly: 2840000,
     estimated_revenue_lift_annual: 34080000,
     top_factors: [
-      { feature: "Online Boarding", importance: 18.42 },
-      { feature: "In-flight Wifi Service", importance: 15.33 },
-      { feature: "In-flight Entertainment", importance: 12.21 },
-      { feature: "Seat Comfort", importance: 9.87 },
-      { feature: "On-board Service", importance: 8.54 }
+      { feature: "In-flight Wifi Service", importance: 22.07 },
+      { feature: "Type of Travel", importance: 20.88 },
+      { feature: "Customer Type", importance: 7.65 },
+      { feature: "Online Boarding", importance: 6.72 },
+      { feature: "Class", importance: 5.37 }
     ],
-    model_accuracy: 0.9612,
-    total_recommendations_possible: 56235,
-    high_risk_passengers: 34120
+    model_accuracy: 0.9654,
+    total_recommendations_possible: 129820,
+    high_risk_passengers: 73452
   },
   metrics: {
-    accuracy: 0.9612, precision: 0.9588, recall: 0.9641, f1_score: 0.9614,
-    roc_auc: 0.9923,
-    confusion_matrix: [[58142, 2301], [2198, 67239]],
-    total_samples: 129880, satisfied_rate: 0.5656, model_type: "CatBoost Classifier"
+    accuracy: 0.9654,
+    precision: 0.9739,
+    precision_satisfied: 0.9739,
+    recall: 0.9805,
+    recall_satisfied: 0.9456,
+    f1_score: 0.9595,
+    f1_satisfied: 0.9595,
+    roc_auc: 0.9955,
+    at_risk_detection_rate: 0.9805,
+    confusion_matrix: null,
+    confusion_matrix_available: false,
+    total_samples: 129880,
+    satisfied_rate: 0.4345,
+    model_type: "CatBoost Classifier"
   },
   featureImportance: {
-    features: ["Online Boarding","In-flight Wifi Service","In-flight Entertainment","Seat Comfort","On-board Service","Leg Room Service","Cleanliness","Food and Drink","Baggage Handling","Check-in Service","Ease of Online Booking","In-flight Service","Gate Location","Departure and Arrival Time Convenience","Flight Distance","Age","Class","Departure Delay","Arrival Delay","Type of Travel"],
-    importance: [18.42,15.33,12.21,9.87,8.54,7.23,6.11,5.44,4.87,3.92,3.41,2.98,2.21,1.87,1.76,1.54,1.32,0.98,0.87,0.76]
+    features: ["In-flight Wifi Service","Type of Travel","Customer Type","Online Boarding","Class","Baggage Handling","Check-in Service","Age","Seat Comfort","In-flight Entertainment","Gate Location","In-flight Service","Flight Distance","On-board Service","Cleanliness","Leg Room Service","Departure and Arrival Time Convenience","Ease of Online Booking","Arrival Delay","Food and Drink","Departure Delay","Gender"],
+    importance: [22.07,20.88,7.65,6.72,5.37,4.63,3.92,3.54,3.52,3.31,3.17,3.06,1.92,1.84,1.72,1.62,1.43,1.40,1.07,0.50,0.45,0.21]
   },
   samplePassengers: [
     { id: 1, label: "Business Traveler – Frequent Flyer" },
     { id: 2, label: "Economy Passenger – First-time Customer" },
-    { id: 3, label: "Eco Plus – Returning Leisure Traveler" },
+    { id: 3, label: "Economy Plus – Returning Leisure Traveler" },
     { id: 4, label: "High Satisfaction Business Class" },
     { id: 5, label: "Senior Economy – Delayed Flight" }
   ],
   recommendations: {
     1: {
-      passenger_profile: { customer_type: "Returning Customer", travel_type: "Business Travel", class: "Business", age: 42, gender: "Male", flight_distance: 1850, departure_delay: 0, arrival_delay: 0 },
+      passenger_profile: { customer_type: "Returning", travel_type: "Business", class: "Business", age: 42, gender: "Male", flight_distance: 1850, departure_delay: 0, arrival_delay: 0 },
       prediction_before: { probability_satisfied: 0.62, probability_dissatisfied: 0.38, prediction: 1 },
       prediction_after: { probability_satisfied: 0.89, probability_dissatisfied: 0.11, prediction: 1 },
       satisfaction_uplift: 0.27,
@@ -90,7 +100,7 @@ const MOCK = {
       ensemble_method: "Hybrid: 40% Rule-Based + 60% CatBoost Feature-Importance"
     },
     2: {
-      passenger_profile: { customer_type: "First-time Customer", travel_type: "Personal Travel", class: "Economy", age: 27, gender: "Female", flight_distance: 420, departure_delay: 45, arrival_delay: 52 },
+      passenger_profile: { customer_type: "First-time", travel_type: "Personal", class: "Economy", age: 27, gender: "Female", flight_distance: 420, departure_delay: 45, arrival_delay: 52 },
       prediction_before: { probability_satisfied: 0.18, probability_dissatisfied: 0.82, prediction: 0 },
       prediction_after: { probability_satisfied: 0.54, probability_dissatisfied: 0.46, prediction: 1 },
       satisfaction_uplift: 0.36,
@@ -111,7 +121,7 @@ const MOCK = {
       ensemble_method: "Hybrid: 40% Rule-Based + 60% CatBoost Feature-Importance"
     },
     3: {
-      passenger_profile: { customer_type: "Returning Customer", travel_type: "Personal Travel", class: "Eco Plus", age: 55, gender: "Male", flight_distance: 980, departure_delay: 15, arrival_delay: 12 },
+      passenger_profile: { customer_type: "Returning", travel_type: "Personal", class: "Economy Plus", age: 55, gender: "Male", flight_distance: 980, departure_delay: 15, arrival_delay: 12 },
       prediction_before: { probability_satisfied: 0.48, probability_dissatisfied: 0.52, prediction: 0 },
       prediction_after: { probability_satisfied: 0.71, probability_dissatisfied: 0.29, prediction: 1 },
       satisfaction_uplift: 0.23,
@@ -130,7 +140,7 @@ const MOCK = {
       ensemble_method: "Hybrid: 40% Rule-Based + 60% CatBoost Feature-Importance"
     },
     4: {
-      passenger_profile: { customer_type: "Returning Customer", travel_type: "Business Travel", class: "Business", age: 38, gender: "Female", flight_distance: 3200, departure_delay: 0, arrival_delay: 0 },
+      passenger_profile: { customer_type: "Returning", travel_type: "Business", class: "Business", age: 38, gender: "Female", flight_distance: 3200, departure_delay: 0, arrival_delay: 0 },
       prediction_before: { probability_satisfied: 0.91, probability_dissatisfied: 0.09, prediction: 1 },
       prediction_after: { probability_satisfied: 0.96, probability_dissatisfied: 0.04, prediction: 1 },
       satisfaction_uplift: 0.05,
@@ -144,7 +154,7 @@ const MOCK = {
       ensemble_method: "Hybrid: 40% Rule-Based + 60% CatBoost Feature-Importance"
     },
     5: {
-      passenger_profile: { customer_type: "Returning Customer", travel_type: "Personal Travel", class: "Economy", age: 67, gender: "Male", flight_distance: 750, departure_delay: 90, arrival_delay: 95 },
+      passenger_profile: { customer_type: "Returning", travel_type: "Personal", class: "Economy", age: 67, gender: "Male", flight_distance: 750, departure_delay: 90, arrival_delay: 95 },
       prediction_before: { probability_satisfied: 0.09, probability_dissatisfied: 0.91, prediction: 0 },
       prediction_after: { probability_satisfied: 0.45, probability_dissatisfied: 0.55, prediction: 0 },
       satisfaction_uplift: 0.36,
@@ -167,17 +177,17 @@ const MOCK = {
   },
   segments: {
     travel_type: {
-      "Business Travel": { count: 73645, satisfaction_rate: 0.693, pct: 56.7, opportunity_score: 72, avg_ratings: { "Online Boarding": 3.6, "In-flight Wifi Service": 3.1, "Seat Comfort": 3.8, "In-flight Entertainment": 3.5, "On-board Service": 3.7, "Cleanliness": 3.6 } },
-      "Personal Travel": { count: 56235, satisfaction_rate: 0.394, pct: 43.3, opportunity_score: 88, avg_ratings: { "Online Boarding": 2.9, "In-flight Wifi Service": 2.6, "Seat Comfort": 3.2, "In-flight Entertainment": 3.1, "On-board Service": 3.3, "Cleanliness": 3.4 } }
+      "Business": { count: 73645, satisfaction_rate: 0.693, pct: 56.7, opportunity_score: 72, avg_ratings: { "Online Boarding": 3.6, "In-flight Wifi Service": 3.1, "Seat Comfort": 3.8, "In-flight Entertainment": 3.5, "On-board Service": 3.7, "Cleanliness": 3.6 } },
+      "Personal": { count: 56235, satisfaction_rate: 0.394, pct: 43.3, opportunity_score: 88, avg_ratings: { "Online Boarding": 2.9, "In-flight Wifi Service": 2.6, "Seat Comfort": 3.2, "In-flight Entertainment": 3.1, "On-board Service": 3.3, "Cleanliness": 3.4 } }
     },
     class: {
       "Business": { count: 47564, satisfaction_rate: 0.718, pct: 36.6, opportunity_score: 55, avg_ratings: { "Online Boarding": 4.0, "In-flight Wifi Service": 3.4, "Seat Comfort": 4.2, "In-flight Entertainment": 3.9, "On-board Service": 4.1, "Cleanliness": 4.0 } },
-      "Eco Plus": { count: 13542, satisfaction_rate: 0.487, pct: 10.4, opportunity_score: 78, avg_ratings: { "Online Boarding": 3.1, "In-flight Wifi Service": 2.9, "Seat Comfort": 3.5, "In-flight Entertainment": 3.2, "On-board Service": 3.4, "Cleanliness": 3.5 } },
+      "Economy Plus": { count: 13542, satisfaction_rate: 0.487, pct: 10.4, opportunity_score: 78, avg_ratings: { "Online Boarding": 3.1, "In-flight Wifi Service": 2.9, "Seat Comfort": 3.5, "In-flight Entertainment": 3.2, "On-board Service": 3.4, "Cleanliness": 3.5 } },
       "Economy": { count: 68774, satisfaction_rate: 0.432, pct: 52.9, opportunity_score: 92, avg_ratings: { "Online Boarding": 2.8, "In-flight Wifi Service": 2.5, "Seat Comfort": 3.0, "In-flight Entertainment": 2.9, "On-board Service": 3.2, "Cleanliness": 3.3 } }
     },
     customer_type: {
-      "Returning Customer": { count: 106100, satisfaction_rate: 0.600, pct: 81.7, opportunity_score: 65 },
-      "First-time Customer": { count: 23780, satisfaction_rate: 0.241, pct: 18.3, opportunity_score: 96 }
+      "Returning": { count: 106100, satisfaction_rate: 0.600, pct: 81.7, opportunity_score: 65 },
+      "First-time": { count: 23780, satisfaction_rate: 0.241, pct: 18.3, opportunity_score: 96 }
     },
     age_group: {
       "18-30": { count: 27845, satisfaction_rate: 0.521, pct: 21.4, opportunity_score: 79 },
@@ -220,8 +230,8 @@ const MOCK = {
       matrix: [[1.00,0.42,0.51,0.38,0.45,0.34,0.40,0.35,0.38],[0.42,1.00,0.39,0.31,0.36,0.28,0.33,0.29,0.31],[0.51,0.39,1.00,0.47,0.52,0.41,0.48,0.44,0.42],[0.38,0.31,0.47,1.00,0.58,0.61,0.54,0.48,0.45],[0.45,0.36,0.52,0.58,1.00,0.55,0.62,0.57,0.53],[0.34,0.28,0.41,0.61,0.55,1.00,0.49,0.44,0.41],[0.40,0.33,0.48,0.54,0.62,0.49,1.00,0.59,0.55],[0.35,0.29,0.44,0.48,0.57,0.44,0.59,1.00,0.51],[0.38,0.31,0.42,0.45,0.53,0.41,0.55,0.51,1.00]]
     },
     class_travel_impact: {
-      by_class: { "Business": { satisfaction_rate: 0.718, avg_rating: 3.98 }, "Eco Plus": { satisfaction_rate: 0.487, avg_rating: 3.35 }, "Economy": { satisfaction_rate: 0.432, avg_rating: 2.97 } },
-      by_travel_type: { "Business Travel": { satisfaction_rate: 0.693, avg_rating: 3.62 }, "Personal Travel": { satisfaction_rate: 0.394, avg_rating: 3.01 } }
+      by_class: { "Business": { satisfaction_rate: 0.718, avg_rating: 3.98 }, "Economy Plus": { satisfaction_rate: 0.487, avg_rating: 3.35 }, "Economy": { satisfaction_rate: 0.432, avg_rating: 2.97 } },
+      by_travel_type: { "Business": { satisfaction_rate: 0.693, avg_rating: 3.62 }, "Personal": { satisfaction_rate: 0.394, avg_rating: 3.01 } }
     }
   }
 };

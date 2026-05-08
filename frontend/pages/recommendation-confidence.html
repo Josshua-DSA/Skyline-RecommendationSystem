@@ -23,7 +23,7 @@
     <div class="card" style="border-color:rgba(155,114,242,0.25);padding:18px;">
       <div style="font-size:20px;margin-bottom:8px;">⚡</div>
       <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">What makes recommendations effective?</div>
-      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Top features: <strong style="color:var(--accent-purple)">Online Boarding, Wifi, Entertainment</strong> — these alone drive over 45% of satisfaction outcomes.</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;" id="top-feature-summary">Top features: <strong style="color:var(--accent-purple)">Loading...</strong></div>
     </div>
   </div>
 
@@ -87,12 +87,12 @@
       <div class="card-header">
         <div>
           <div class="card-title">ROC Curve</div>
-          <div class="card-subtitle">AUC = 0.9923 — near-perfect discrimination ability</div>
+          <div class="card-subtitle" id="roc-subtitle">AUC = —</div>
         </div>
-        <span class="badge badge-green">AUC 0.9923</span>
+        <span class="badge badge-green" id="auc-badge">AUC —</span>
       </div>
       <canvas id="chart-roc" height="220"></canvas>
-      <div class="story-block">
+      <div class="story-block" id="auc-story">
         An <strong>AUC of 0.9923</strong> means the system can distinguish satisfied from dissatisfied passengers 
         with 99.2% reliability — far exceeding the 0.80 threshold for a production-grade recommendation engine.
       </div>
@@ -105,7 +105,7 @@
           <div class="card-title">Confusion Matrix</div>
           <div class="card-subtitle">Prediction outcome breakdown on full dataset</div>
         </div>
-        <span class="badge badge-blue">129,880 samples</span>
+        <span class="badge badge-blue" id="cm-samples-badge">— samples</span>
       </div>
 
       <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;">
@@ -136,7 +136,7 @@
         </div>
       </div>
 
-      <div class="story-block" style="margin-top:16px;">
+      <div class="story-block" style="margin-top:16px;" id="cm-story">
         Only <strong id="cm-errors">—</strong> misclassifications out of 129,880 passengers. 
         False negatives (missed at-risk passengers) are kept extremely low — 
         critical for ensuring no dissatisfied passenger is overlooked by the recommendation engine.
@@ -156,7 +156,7 @@
     <div style="height:340px;position:relative;">
       <canvas id="chart-feature-importance"></canvas>
     </div>
-    <div class="story-block" style="margin-top:16px;">
+    <div class="story-block" style="margin-top:16px;" id="feature-story">
       <strong>Online Boarding (18.4%)</strong> and <strong>In-flight Wifi (15.3%)</strong> are the two strongest levers for improving satisfaction — 
       together they account for <strong>33.7%</strong> of the model's decision logic. 
       Targeted improvements here will yield the highest ROI across all passenger segments.

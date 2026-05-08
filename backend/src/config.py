@@ -1,13 +1,21 @@
 import os
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = Path(__file__).resolve().parents[2]
 
-MODEL_PATH = os.path.join(BASE_DIR, "models", "model_pipeline.pkl")
-METRICS_PATH = os.path.join(BASE_DIR, "models", "model_metrics.json")
-FEATURE_IMPORTANCE_PATH = os.path.join(BASE_DIR, "models", "feature_importance.json")
-LABEL_MAPPING_PATH = os.path.join(BASE_DIR, "models", "label_mapping.json")
-DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "airline_cleaned.csv")
-RAW_DATA_PATH = os.path.join(BASE_DIR, "data", "raw", "airline_passenger_satisfaction.csv")
+MODELS_DIR = ROOT_DIR / "models"
+DATA_DIR = ROOT_DIR / "data"
+RAW_DATA_DIR = DATA_DIR / "Raw"
+REPORTS_DIR = ROOT_DIR / "reports"
+
+MODEL_PATH = MODELS_DIR / "catboost_satisfaction_model.cbm"
+METADATA_PATH = MODELS_DIR / "model_metadata.json"
+METRICS_PATH = MODELS_DIR / "model_metrics.json"
+FEATURE_IMPORTANCE_PATH = MODELS_DIR / "feature_importance.csv"
+SAMPLE_PASSENGERS_PATH = MODELS_DIR / "sample_passengers.csv"
+
+RAW_DATA_PATH = RAW_DATA_DIR / "Airline Quality Ratings.csv"
+
 
 SERVICE_FEATURES = [
     "Departure and Arrival Time Convenience",

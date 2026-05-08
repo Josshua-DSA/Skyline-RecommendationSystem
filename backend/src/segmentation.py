@@ -1,119 +1,150 @@
-"""Passenger segmentation analysis."""
-import numpy as np
+"""Passenger segmentation and executive summary from the airline dataset."""
 
-MOCK_SEGMENTS = {
-    "travel_type": {
-        "Business Travel": {
-            "count": 73645, "satisfaction_rate": 0.693, "pct": 56.7,
-            "avg_ratings": {
-                "Online Boarding": 3.6, "In-flight Wifi Service": 3.1,
-                "Seat Comfort": 3.8, "In-flight Entertainment": 3.5,
-                "On-board Service": 3.7, "Cleanliness": 3.6
-            },
-            "opportunity_score": 72
-        },
-        "Personal Travel": {
-            "count": 56235, "satisfaction_rate": 0.394, "pct": 43.3,
-            "avg_ratings": {
-                "Online Boarding": 2.9, "In-flight Wifi Service": 2.6,
-                "Seat Comfort": 3.2, "In-flight Entertainment": 3.1,
-                "On-board Service": 3.3, "Cleanliness": 3.4
-            },
-            "opportunity_score": 88
-        }
-    },
-    "class": {
-        "Business": {
-            "count": 47564, "satisfaction_rate": 0.718, "pct": 36.6,
-            "avg_ratings": {
-                "Online Boarding": 4.0, "In-flight Wifi Service": 3.4,
-                "Seat Comfort": 4.2, "In-flight Entertainment": 3.9,
-                "On-board Service": 4.1, "Cleanliness": 4.0
-            },
-            "opportunity_score": 55
-        },
-        "Eco Plus": {
-            "count": 13542, "satisfaction_rate": 0.487, "pct": 10.4,
-            "avg_ratings": {
-                "Online Boarding": 3.1, "In-flight Wifi Service": 2.9,
-                "Seat Comfort": 3.5, "In-flight Entertainment": 3.2,
-                "On-board Service": 3.4, "Cleanliness": 3.5
-            },
-            "opportunity_score": 78
-        },
-        "Economy": {
-            "count": 68774, "satisfaction_rate": 0.432, "pct": 52.9,
-            "avg_ratings": {
-                "Online Boarding": 2.8, "In-flight Wifi Service": 2.5,
-                "Seat Comfort": 3.0, "In-flight Entertainment": 2.9,
-                "On-board Service": 3.2, "Cleanliness": 3.3
-            },
-            "opportunity_score": 92
-        }
-    },
-    "customer_type": {
-        "Returning Customer": {
-            "count": 106100, "satisfaction_rate": 0.600, "pct": 81.7,
-            "avg_ratings": {
-                "Online Boarding": 3.5, "In-flight Wifi Service": 3.0,
-                "Seat Comfort": 3.7, "In-flight Entertainment": 3.4,
-                "On-board Service": 3.6, "Cleanliness": 3.7
-            },
-            "opportunity_score": 65
-        },
-        "First-time Customer": {
-            "count": 23780, "satisfaction_rate": 0.241, "pct": 18.3,
-            "avg_ratings": {
-                "Online Boarding": 2.7, "In-flight Wifi Service": 2.4,
-                "Seat Comfort": 2.9, "In-flight Entertainment": 2.8,
-                "On-board Service": 3.0, "Cleanliness": 3.1
-            },
-            "opportunity_score": 96
-        }
-    },
-    "age_group": {
-        "18-30": {"count": 27845, "satisfaction_rate": 0.521, "pct": 21.4, "opportunity_score": 79},
-        "31-45": {"count": 42340, "satisfaction_rate": 0.587, "pct": 32.6, "opportunity_score": 71},
-        "46-60": {"count": 38920, "satisfaction_rate": 0.594, "pct": 30.0, "opportunity_score": 69},
-        "60+":   {"count": 20775, "satisfaction_rate": 0.482, "pct": 16.0, "opportunity_score": 83}
-    },
-    "flight_distance_group": {
-        "Short (<500km)":   {"count": 31245, "satisfaction_rate": 0.467, "pct": 24.1, "opportunity_score": 85},
-        "Medium (500-2000km)": {"count": 58320, "satisfaction_rate": 0.548, "pct": 44.9, "opportunity_score": 74},
-        "Long (>2000km)":   {"count": 40315, "satisfaction_rate": 0.631, "pct": 31.0, "opportunity_score": 62}
+import json
+
+import pandas as pd
+
+from .config import FEATURE_IMPORTANCE_PATH, METRICS_PATH, RAW_DATA_PATH, SERVICE_FEATURES
+
+
+_df_cache = None
+
+
+def _load_dataset():
+    global _df_cache
+
+    if _df_cache is None:
+        _df_cache = pd.read_csv(RAW_DATA_PATH)
+        _df_cache["is_satisfied"] = _df_cache["Satisfaction"].eq("Satisfied").astype(int)
+
+    return _df_cache.copy()
+
+
+def _safe_round(value, digits=3):
+    if pd.isna(value):
+        return 0
+    return round(float(value), digits)
+
+
+def _opportunity_score(count, total, satisfaction_rate):
+    share = count / total if total else 0
+    score = ((1 - satisfaction_rate) * 0.70 + share * 0.30) * 100
+    return round(float(score))
+
+
+def _avg_ratings(group_df):
+    key_services = [
+        "Online Boarding",
+        "In-flight Wifi Service",
+        "Seat Comfort",
+        "In-flight Entertainment",
+        "On-board Service",
+        "Cleanliness",
+    ]
+
+    return {
+        feature: _safe_round(group_df[feature].mean(), 2)
+        for feature in key_services
+        if feature in group_df.columns
     }
-}
+
+
+def _build_segment(df, column):
+    total = len(df)
+    segments = {}
+
+    for name, group in df.groupby(column, dropna=False, observed=False):
+        count = len(group)
+        satisfaction_rate = group["is_satisfied"].mean()
+
+        segments[str(name)] = {
+            "count": int(count),
+            "satisfaction_rate": _safe_round(satisfaction_rate),
+            "pct": _safe_round((count / total) * 100, 1),
+            "avg_ratings": _avg_ratings(group),
+            "opportunity_score": _opportunity_score(count, total, satisfaction_rate),
+        }
+
+    return dict(sorted(segments.items(), key=lambda item: item[1]["count"], reverse=True))
+
+
+def _load_top_factors(limit=5):
+    try:
+        fi_df = pd.read_csv(FEATURE_IMPORTANCE_PATH)
+        return (
+            fi_df.sort_values("importance", ascending=False)
+            .head(limit)
+            .round({"importance": 2})
+            .to_dict(orient="records")
+        )
+    except Exception:
+        return []
+
+
+def _load_metrics():
+    try:
+        with open(METRICS_PATH, "r") as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
 
 def get_all_segments():
-    return MOCK_SEGMENTS
+    df = _load_dataset()
+    segmented = df.copy()
+
+    segmented["age_group"] = pd.cut(
+        segmented["Age"],
+        bins=[0, 17, 30, 45, 60, 120],
+        labels=["Under 18", "18-30", "31-45", "46-60", "60+"],
+        include_lowest=True,
+    )
+
+    segmented["flight_distance_group"] = pd.cut(
+        segmented["Flight Distance"],
+        bins=[0, 500, 2000, float("inf")],
+        labels=["Short (<500km)", "Medium (500-2000km)", "Long (>2000km)"],
+        include_lowest=True,
+    )
+
+    return {
+        "travel_type": _build_segment(segmented, "Type of Travel"),
+        "class": _build_segment(segmented, "Class"),
+        "customer_type": _build_segment(segmented, "Customer Type"),
+        "age_group": _build_segment(segmented, "age_group"),
+        "flight_distance_group": _build_segment(segmented, "flight_distance_group"),
+    }
 
 
 def get_segment_detail(segment_type: str):
-    return MOCK_SEGMENTS.get(segment_type, {})
+    return get_all_segments().get(segment_type, {})
 
 
 def get_executive_summary():
-    total = 129880
-    satisfied = int(total * 0.5656)
+    df = _load_dataset()
+    metrics = _load_metrics()
+
+    total = len(df)
+    satisfied = int(df["is_satisfied"].sum())
     dissatisfied = total - satisfied
+    satisfaction_rate = satisfied / total if total else 0
+    predicted_uplift = 0.087
+    service_issue_mask = df[SERVICE_FEATURES].le(3).any(axis=1)
+
     return {
-        "total_passengers": total,
+        "total_passengers": int(total),
         "satisfied_count": satisfied,
         "dissatisfied_count": dissatisfied,
-        "satisfaction_rate": 0.5656,
-        "predicted_uplift": 0.087,
-        "predicted_new_satisfaction_rate": 0.5656 + 0.087,
+        "satisfaction_rate": _safe_round(satisfaction_rate, 4),
+        "predicted_uplift": predicted_uplift,
+        "predicted_new_satisfaction_rate": _safe_round(
+            min(1, satisfaction_rate + predicted_uplift),
+            4,
+        ),
         "estimated_revenue_lift_monthly": 2_840_000,
         "estimated_revenue_lift_annual": 34_080_000,
-        "top_factors": [
-            {"feature": "Online Boarding", "importance": 18.42},
-            {"feature": "In-flight Wifi Service", "importance": 15.33},
-            {"feature": "In-flight Entertainment", "importance": 12.21},
-            {"feature": "Seat Comfort", "importance": 9.87},
-            {"feature": "On-board Service", "importance": 8.54}
-        ],
-        "model_accuracy": 0.9612,
-        "total_recommendations_possible": 56235,
-        "high_risk_passengers": 34120
+        "top_factors": _load_top_factors(),
+        "model_accuracy": metrics.get("accuracy"),
+        "total_recommendations_possible": int(service_issue_mask.sum()),
+        "high_risk_passengers": dissatisfied,
     }

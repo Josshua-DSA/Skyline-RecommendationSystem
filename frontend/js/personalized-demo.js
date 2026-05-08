@@ -52,7 +52,7 @@ function renderProfile(profile, id) {
   const badgeEl = document.getElementById('profile-badge');
   if (badgeEl) {
     badgeEl.textContent = profile.class;
-    badgeEl.className = 'badge ' + (profile.class === 'Business' ? 'badge-blue' : profile.class === 'Eco Plus' ? 'badge-gold' : 'badge-purple');
+    badgeEl.className = 'badge ' + (profile.class === 'Business' ? 'badge-blue' : profile.class === 'Economy Plus' ? 'badge-gold' : 'badge-purple');
   }
 
   const attrsEl = document.getElementById('profile-attrs');

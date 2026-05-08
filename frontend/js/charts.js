@@ -33,7 +33,7 @@ function destroyChart(id) {
 }
 
 // ── ROC CURVE (simulated) ──
-function drawROCCurve(canvasId) {
+function drawROCCurve(canvasId, auc = 0.9955) {
   destroyChart(canvasId);
   const pts = [];
   for (let i = 0; i <= 1; i += 0.01) {
@@ -45,7 +45,7 @@ function drawROCCurve(canvasId) {
     type: 'scatter',
     data: {
       datasets: [
-        { label: 'ROC Curve (AUC = 0.9923)', data: pts, borderColor: CHART_COLORS.blue, backgroundColor: 'transparent', showLine: true, pointRadius: 0, borderWidth: 2.5 },
+        { label: `ROC Curve (AUC = ${Number(auc).toFixed(4)})`, data: pts, borderColor: CHART_COLORS.blue, backgroundColor: 'transparent', showLine: true, pointRadius: 0, borderWidth: 2.5 },
         { label: 'Random Classifier', data: [{x:0,y:0},{x:1,y:1}], borderColor: CHART_COLORS.muted, backgroundColor: 'transparent', showLine: true, pointRadius: 0, borderWidth: 1.5, borderDash: [6,4] }
       ]
     },

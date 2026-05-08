@@ -7,8 +7,8 @@ bp = Blueprint("recommendation", __name__, url_prefix="/api")
 SAMPLE_PASSENGERS = [
     {
         "id": 1, "label": "Business Traveler – Frequent Flyer",
-        "Gender": "Male", "Age": 42, "Customer Type": "Returning Customer",
-        "Type of Travel": "Business Travel", "Class": "Business",
+        "Gender": "Male", "Age": 42, "Customer Type": "Returning",
+        "Type of Travel": "Business", "Class": "Business",
         "Flight Distance": 1850, "Departure Delay": 0, "Arrival Delay": 0,
         "Departure and Arrival Time Convenience": 4, "Ease of Online Booking": 3,
         "Check-in Service": 4, "Online Boarding": 2, "Gate Location": 3,
@@ -18,8 +18,8 @@ SAMPLE_PASSENGERS = [
     },
     {
         "id": 2, "label": "Economy Passenger – First-time Customer",
-        "Gender": "Female", "Age": 27, "Customer Type": "First-time Customer",
-        "Type of Travel": "Personal Travel", "Class": "Economy",
+        "Gender": "Female", "Age": 27, "Customer Type": "First-time",
+        "Type of Travel": "Personal", "Class": "Economy",
         "Flight Distance": 420, "Departure Delay": 45, "Arrival Delay": 52,
         "Departure and Arrival Time Convenience": 2, "Ease of Online Booking": 2,
         "Check-in Service": 2, "Online Boarding": 2, "Gate Location": 3,
@@ -28,9 +28,9 @@ SAMPLE_PASSENGERS = [
         "In-flight Wifi Service": 1, "In-flight Entertainment": 2, "Baggage Handling": 2
     },
     {
-        "id": 3, "label": "Eco Plus – Returning Leisure Traveler",
-        "Gender": "Male", "Age": 55, "Customer Type": "Returning Customer",
-        "Type of Travel": "Personal Travel", "Class": "Eco Plus",
+        "id": 3, "label": "Economy Plus – Returning Leisure Traveler",
+        "Gender": "Male", "Age": 55, "Customer Type": "Returning",
+        "Type of Travel": "Personal", "Class": "Economy Plus",
         "Flight Distance": 980, "Departure Delay": 15, "Arrival Delay": 12,
         "Departure and Arrival Time Convenience": 3, "Ease of Online Booking": 3,
         "Check-in Service": 3, "Online Boarding": 3, "Gate Location": 4,
@@ -40,8 +40,8 @@ SAMPLE_PASSENGERS = [
     },
     {
         "id": 4, "label": "High Satisfaction Business Class",
-        "Gender": "Female", "Age": 38, "Customer Type": "Returning Customer",
-        "Type of Travel": "Business Travel", "Class": "Business",
+        "Gender": "Female", "Age": 38, "Customer Type": "Returning",
+        "Type of Travel": "Business", "Class": "Business",
         "Flight Distance": 3200, "Departure Delay": 0, "Arrival Delay": 0,
         "Departure and Arrival Time Convenience": 5, "Ease of Online Booking": 4,
         "Check-in Service": 5, "Online Boarding": 4, "Gate Location": 4,
@@ -51,8 +51,8 @@ SAMPLE_PASSENGERS = [
     },
     {
         "id": 5, "label": "Senior Economy – Delayed Flight",
-        "Gender": "Male", "Age": 67, "Customer Type": "Returning Customer",
-        "Type of Travel": "Personal Travel", "Class": "Economy",
+        "Gender": "Male", "Age": 67, "Customer Type": "Returning",
+        "Type of Travel": "Personal", "Class": "Economy",
         "Flight Distance": 750, "Departure Delay": 90, "Arrival Delay": 95,
         "Departure and Arrival Time Convenience": 1, "Ease of Online Booking": 2,
         "Check-in Service": 2, "Online Boarding": 2, "Gate Location": 2,
